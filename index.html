@@ -254,7 +254,55 @@
 
     <div class="status-row">
         <span>Progress</span>
-        <strong id="measurementProgress">-</strong>
+        <strong id="measurementProgress">0/10</strong>
+    </div>
+
+    <!-- TIMER PENGUKURAN -->
+    <div class="measurement-box">
+
+        <div class="measurement-top">
+
+            <div>
+                <strong>PROGRESS PENGUKURAN</strong>
+
+                <div
+                    id="measurementDescription"
+                    class="measurement-description"
+                >
+                    Aktifkan saklar SELESAI untuk memulai pengukuran.
+                </div>
+            </div>
+
+            <div
+                id="measurementTimer"
+                class="measurement-timer"
+            >
+                00:00
+            </div>
+
+        </div>
+
+
+        <!-- PROGRESS BAR -->
+        <div class="measurement-progress-track">
+
+            <div
+                id="measurementProgressBar"
+                class="measurement-progress-bar"
+                style="width: 0%;"
+            ></div>
+
+        </div>
+
+
+        <!-- KETERANGAN DATA -->
+        <div
+            id="measurementDataInfo"
+            class="measurement-data-info"
+        >
+            Belum ada data pengukuran.
+        </div>
+
     </div>
 
 </div>
