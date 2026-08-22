@@ -366,7 +366,123 @@ function formatTimestamp(row, index) {
     return text;
 }
 
+// =========================================================
+// PARSE TIMESTAMP UNTUK SORTING
+// Terbaru -> Terlama
+// =========================================================
 
+function getTimestampMillis(row, index) {
+
+    if (
+        !row ||
+        !row.c ||
+        index < 0 ||
+        !row.c[index]
+    ) {
+        return 0;
+    }
+
+    const cell = row.c[index];
+
+    const value = cell.v;
+
+    if (
+        value === null ||
+        value === undefined
+    ) {
+        return 0;
+    }
+
+    const text = String(value).trim();
+
+
+    // -----------------------------------------------------
+    // Google GViz:
+    // Date(2026,7,23,1,56,1)
+    // -----------------------------------------------------
+
+    const match = text.match(
+        /^Date\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)$/
+    );
+
+
+    if (match) {
+
+        const year =
+            Number(match[1]);
+
+        const month =
+            Number(match[2]);
+
+        const day =
+            Number(match[3]);
+
+        const hour =
+            Number(match[4]);
+
+        const minute =
+            Number(match[5]);
+
+        const second =
+            Number(match[6]);
+
+
+        return new Date(
+            year,
+            month,
+            day,
+            hour,
+            minute,
+            second
+        ).getTime();
+    }
+
+
+    // -----------------------------------------------------
+    // Jika Google mengirim format:
+    // DD/MM/YYYY HH:mm:ss
+    // -----------------------------------------------------
+
+    const normal =
+        text.match(
+            /^(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{2}):(\d{2})$/
+        );
+
+
+    if (normal) {
+
+        const day =
+            Number(normal[1]);
+
+        const month =
+            Number(normal[2]) - 1;
+
+        const year =
+            Number(normal[3]);
+
+        const hour =
+            Number(normal[4]);
+
+        const minute =
+            Number(normal[5]);
+
+        const second =
+            Number(normal[6]);
+
+
+        return new Date(
+            year,
+            month,
+            day,
+            hour,
+            minute,
+            second
+        ).getTime();
+    }
+
+
+    return 0;
+}
 
 /* =========================================================
    FORMAT CELL
