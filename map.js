@@ -382,9 +382,14 @@ function getTimestampMillis(row, index) {
         return 0;
     }
 
-    const cell = row.c[index];
 
-    const value = cell.v;
+    const cell =
+        row.c[index];
+
+
+    const value =
+        cell.v;
+
 
     if (
         value === null ||
@@ -393,17 +398,26 @@ function getTimestampMillis(row, index) {
         return 0;
     }
 
-    const text = String(value).trim();
+
+    const text =
+        String(value).trim();
 
 
-    // -----------------------------------------------------
-    // Google GViz:
-    // Date(2026,7,23,1,56,1)
-    // -----------------------------------------------------
+    /* -----------------------------------------
+       GOOGLE GVIZ DATE
+       
+       Contoh:
+       Date(2026,7,23,1,56,1)
+       
+       Bulan:
+       0 = Januari
+       7 = Agustus
+    ----------------------------------------- */
 
-    const match = text.match(
-        /^Date\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)$/
-    );
+    const match =
+        text.match(
+            /^Date\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)$/
+        );
 
 
     if (match) {
@@ -438,10 +452,9 @@ function getTimestampMillis(row, index) {
     }
 
 
-    // -----------------------------------------------------
-    // Jika Google mengirim format:
-    // DD/MM/YYYY HH:mm:ss
-    // -----------------------------------------------------
+    /* -----------------------------------------
+       FORMAT DD/MM/YYYY HH:mm:ss
+    ----------------------------------------- */
 
     const normal =
         text.match(
@@ -478,6 +491,24 @@ function getTimestampMillis(row, index) {
             minute,
             second
         ).getTime();
+    }
+
+
+    /* -----------------------------------------
+       COBA PARSE DATE BIASA
+    ----------------------------------------- */
+
+    const parsed =
+        new Date(text);
+
+
+    if (
+        !Number.isNaN(
+            parsed.getTime()
+        )
+    ) {
+
+        return parsed.getTime();
     }
 
 
@@ -869,22 +900,31 @@ async function loadRadiationMap() {
                 !(lat === 0 && lon === 0)
             ) {
 
-                const point = {
+               const point = {
 
-                    lat: lat,
+    lat: lat,
 
-                    lon: lon,
+    lon: lon,
 
-                    usv:
-                        Number.isFinite(usv)
-                            ? usv
-                            : NaN,
+    usv:
+        Number.isFinite(usv)
+            ? usv
+            : NaN,
 
-                    cpm:
-                        Number.isFinite(cpm)
-                            ? cpm
-                            : NaN
-                };
+    cpm:
+        Number.isFinite(cpm)
+            ? cpm
+            : NaN,
+
+    timestamp:
+        getTimestampMillis(
+            row,
+            timestampIndex
+        ),
+
+    originalIndex:
+        rowIndex
+};
 
 
                 points.push(point);
@@ -895,7 +935,17 @@ async function loadRadiationMap() {
             }
         }
 
-
+const latestPoint =
+    points.length > 0
+        ? points.reduce(
+            (latest, point) =>
+                point.timestamp >
+                latest.timestamp
+                    ? point
+                    : latest
+        )
+        : null;
+       
         window.radVPointByRowIndex =
             pointByRowIndex;
 
@@ -975,31 +1025,30 @@ radMap.eachLayer(function (layer) {
         ----------------------------------------- */
 
         points.forEach(
-            (point, index) => {
+    (point) => {
 
-                const marker =
-                    makeMarker(
-                        point.lat,
-                        point.lon,
-                        point.usv,
-                        point.cpm,
-                        index === points.length - 1
-                    );
+        const marker =
+            makeMarker(
+                point.lat,
+                point.lon,
+                point.usv,
+                point.cpm,
+                point === latestPoint
+            );
 
-
-                marker.addTo(
-                    pointLayer
-                );
-            }
+        marker.addTo(
+            pointLayer
         );
+    }
+);
 
 
         /* -----------------------------------------
            DATA TERBARU
         ----------------------------------------- */
 
-        const latest =
-            points[points.length - 1];
+       const latest =
+    latestPoint;
 
 
         /* -----------------------------------------
@@ -1291,292 +1340,336 @@ function renderSpreadsheetTable(
     }
 
 
-    /* -----------------------------------------
-       ROW
-    ----------------------------------------- */
+ /* -----------------------------------------
+   ROW
+----------------------------------------- */
 
-   rows
-    .map((row, originalIndex) => ({
-        row: row,
-        originalIndex: originalIndex
-    }))
-    .reverse()
-    .forEach(
-        ({ row, originalIndex }, displayIndex) => {
+/* -----------------------------------------
+   URUTKAN DATA TERBARU DI ATAS
+----------------------------------------- */
 
-            const lat =
-                Number(
-                    valueFromCell(
+const sortedRows =
+    rows
+        .map(
+            (row, originalIndex) => ({
+                row: row,
+                originalIndex: originalIndex,
+                timestamp:
+                    getTimestampMillis(
                         row,
-                        latIndex
+                        timestampIndex
                     )
-                );
+            })
+        )
+        .sort(
+            (a, b) =>
+                b.timestamp -
+                a.timestamp
+        );
 
 
-            const lon =
-                Number(
-                    valueFromCell(
-                        row,
-                        lonIndex
-                    )
-                );
+/* -----------------------------------------
+   RENDER ROW
+----------------------------------------- */
+
+sortedRows.forEach(
+    (item, displayIndex) => {
+
+        const row =
+            item.row;
+
+        const originalIndex =
+            item.originalIndex;
 
 
-            const usv =
-                Number(
-                    valueFromCell(
-                        row,
-                        usvIndex
-                    )
-                );
+        const lat =
+            Number(
+                valueFromCell(
+                    row,
+                    latIndex
+                )
+            );
 
 
-            const cpm =
-                Number(
-                    valueFromCell(
-                        row,
-                        cpmIndex
-                    )
-                );
+        const lon =
+            Number(
+                valueFromCell(
+                    row,
+                    lonIndex
+                )
+            );
 
 
-            const point =
+        const usv =
+            Number(
+                valueFromCell(
+                    row,
+                    usvIndex
+                )
+            );
+
+
+        const cpm =
+            Number(
+                valueFromCell(
+                    row,
+                    cpmIndex
+                )
+            );
+
+
+       /* -----------------------------------------
+   CARI POINT SESUAI BARIS ASLI
+----------------------------------------- */
+
+const point =
     window.radVPointByRowIndex
         ? window.radVPointByRowIndex[
             originalIndex
         ]
         : null;
 
-            const latestPoint =
-                points.length
-                    ? points[points.length - 1]
-                    : null;
+
+/* -----------------------------------------
+   TENTUKAN DATA TERBARU
+----------------------------------------- */
+
+const latestOriginalIndex =
+    sortedRows.length > 0
+        ? sortedRows[0].originalIndex
+        : -1;
 
 
-            const isLatest =
-                point &&
-                latestPoint &&
-                point === latestPoint;
+const isLatest =
+    originalIndex === latestOriginalIndex;
 
 
-            const level =
-                radiationLevel(usv);
+        const level =
+            radiationLevel(usv);
 
 
-            const tr =
-                document.createElement("tr");
+        const tr =
+            document.createElement("tr");
 
 
-            if (isLatest) {
-                tr.classList.add(
-                    "latest-row"
-                );
-            }
+        if (isLatest) {
 
-
-            /* -----------------------------------------
-               CELL DATA
-            ----------------------------------------- */
-
-            const values =
-                headers
-                    .map(
-                        (header, colIndex) => {
-
-                            let value;
-
-if (colIndex === timestampIndex) {
-
-    value = formatTimestamp(
-        row,
-        colIndex
-    );
-
-} else {
-
-    value = formatCellValue(
-        valueFromCell(
-            row,
-            colIndex
-        )
-    );
-}
-
-                            /* --------------------------------
-                               WARNA RADIATION
-                            -------------------------------- */
-
-                            let className = "";
-
-
-                            if (
-                                colIndex ===
-                                usvIndex
-                            ) {
-
-                                if (
-                                    level === "safe"
-                                ) {
-
-                                    className =
-                                        "radiation-low";
-                                }
-
-
-                                if (
-                                    level === "medium"
-                                ) {
-
-                                    className =
-                                        "radiation-medium";
-                                }
-
-
-                                if (
-                                    level === "high"
-                                ) {
-
-                                    className =
-                                        "radiation-high";
-                                }
-                            }
-
-
-                            return `
-
-                                <td class="${className}">
-                                    ${escapeHtml(value)}
-                                </td>
-                            `;
-                        }
-                    )
-                    .join("");
-
-
-            /* -----------------------------------------
-               BUTTON PETA
-            ----------------------------------------- */
-
-            const mapButton =
-                Number.isFinite(lat) &&
-                Number.isFinite(lon)
-
-                    ? `
-                        <button
-                            type="button"
-                            class="table-map-button"
-                        >
-                            📍 LIHAT
-                        </button>
-                    `
-
-                    : "-";
-
-
-            tr.innerHTML = `
-
-                <td>
-                    ${displayIndex + 1}
-                </td>
-
-                ${values}
-
-                <td>
-                    ${mapButton}
-                </td>
-            `;
-
-
-            /* -----------------------------------------
-               CLICK ROW
-            ----------------------------------------- */
-
-            tr.addEventListener(
-                "click",
-                () => {
-
-                    if (
-                        !Number.isFinite(lat) ||
-                        !Number.isFinite(lon) ||
-                        !radMap
-                    ) {
-
-                        return;
-                    }
-
-
-                    /* -------------------------------
-                       Fokus peta
-                    ------------------------------- */
-
-                    radMap.setView(
-                        [lat, lon],
-                        Math.max(
-                            radMap.getZoom(),
-                            17
-                        ),
-                        {
-                            animate: true
-                        }
-                    );
-
-
-                    /* -------------------------------
-                       Marker sementara
-                    ------------------------------- */
-
-                    const marker =
-                        makeMarker(
-                            lat,
-                            lon,
-                            Number.isFinite(usv)
-                                ? usv
-                                : NaN,
-                            Number.isFinite(cpm)
-                                ? cpm
-                                : NaN,
-                            isLatest
-                        );
-
-
-                    marker.addTo(
-                        pointLayer
-                    );
-
-
-                    marker.openPopup();
-
-
-                    /* -------------------------------
-                       Hapus marker setelah 4 detik
-                    ------------------------------- */
-
-                    setTimeout(
-                        () => {
-
-                            if (
-                                pointLayer &&
-                                pointLayer.hasLayer(
-                                    marker
-                                )
-                            ) {
-
-                                pointLayer.removeLayer(
-                                    marker
-                                );
-                            }
-
-                        },
-                        4000
-                    );
-                }
+            tr.classList.add(
+                "latest-row"
             );
-
-
-            body.appendChild(tr);
         }
-    );
 
+
+        /* -----------------------------------------
+           CELL DATA
+        ----------------------------------------- */
+
+        const values =
+            headers
+                .map(
+                    (header, colIndex) => {
+
+                        let value;
+
+
+                        if (
+                            colIndex ===
+                            timestampIndex
+                        ) {
+
+                            value =
+                                formatTimestamp(
+                                    row,
+                                    colIndex
+                                );
+
+                        } else {
+
+                            value =
+                                formatCellValue(
+                                    valueFromCell(
+                                        row,
+                                        colIndex
+                                    )
+                                );
+                        }
+
+
+                        /* --------------------------------
+                           WARNA RADIATION
+                        -------------------------------- */
+
+                        let className = "";
+
+
+                        if (
+                            colIndex ===
+                            usvIndex
+                        ) {
+
+                            if (
+                                level === "safe"
+                            ) {
+
+                                className =
+                                    "radiation-low";
+
+                            } else if (
+                                level === "medium"
+                            ) {
+
+                                className =
+                                    "radiation-medium";
+
+                            } else if (
+                                level === "high"
+                            ) {
+
+                                className =
+                                    "radiation-high";
+                            }
+                        }
+
+
+                        return `
+                            <td class="${className}">
+                                ${escapeHtml(value)}
+                            </td>
+                        `;
+                    }
+                )
+                .join("");
+
+
+        /* -----------------------------------------
+           BUTTON PETA
+        ----------------------------------------- */
+
+        const mapButton =
+            Number.isFinite(lat) &&
+            Number.isFinite(lon)
+
+                ? `
+                    <button
+                        type="button"
+                        class="table-map-button"
+                    >
+                        📍 LIHAT
+                    </button>
+                `
+
+                : "-";
+
+
+        /* -----------------------------------------
+           BUAT BARIS
+        ----------------------------------------- */
+
+        tr.innerHTML = `
+
+            <td>
+                ${displayIndex + 1}
+            </td>
+
+            ${values}
+
+            <td>
+                ${mapButton}
+            </td>
+        `;
+
+
+        /* -----------------------------------------
+           CLICK ROW
+        ----------------------------------------- */
+
+        tr.addEventListener(
+            "click",
+            () => {
+
+                if (
+                    !Number.isFinite(lat) ||
+                    !Number.isFinite(lon) ||
+                    !radMap
+                ) {
+
+                    return;
+                }
+
+
+                /* -------------------------------
+                   Fokus peta
+                ------------------------------- */
+
+                radMap.setView(
+                    [lat, lon],
+                    Math.max(
+                        radMap.getZoom(),
+                        17
+                    ),
+                    {
+                        animate: true
+                    }
+                );
+
+
+                /* -------------------------------
+                   Marker sementara
+                ------------------------------- */
+
+                const marker =
+                    makeMarker(
+                        lat,
+                        lon,
+                        Number.isFinite(usv)
+                            ? usv
+                            : NaN,
+                        Number.isFinite(cpm)
+                            ? cpm
+                            : NaN,
+                        isLatest
+                    );
+
+
+                marker.addTo(
+                    pointLayer
+                );
+
+
+                marker.openPopup();
+
+
+                /* -------------------------------
+                   Hapus marker setelah 4 detik
+                ------------------------------- */
+
+                setTimeout(
+                    () => {
+
+                        if (
+                            pointLayer &&
+                            pointLayer.hasLayer(
+                                marker
+                            )
+                        ) {
+
+                            pointLayer.removeLayer(
+                                marker
+                            );
+                        }
+
+                    },
+                    4000
+                );
+
+            }
+        );
+
+
+        body.appendChild(tr);
+
+    }
+);
 
     /* -----------------------------------------
        TABLE INFO
