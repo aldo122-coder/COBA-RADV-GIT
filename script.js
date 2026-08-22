@@ -73,6 +73,15 @@ let measurementMinute = 0;
 
 let measurementTimer = null;
 
+// =========================================================
+// TIMER DETAIL PENGUKURAN
+// =========================================================
+
+let measurementStartTime = null;
+
+let measurementClockTimer = null;
+
+const MEASUREMENT_TOTAL_SECONDS = 10 * 60;
 
 // =========================================================
 // LOCK HALAMAN SAAT AWAL
@@ -871,21 +880,35 @@ function startMeasurement() {
     }
 
 
+    // =====================================================
+    // RESET SESI
+    // =====================================================
+
     measurementActive = true;
 
     measurementMinute = 0;
+
+    measurementStartTime =
+        Date.now();
+
 
     switch2State =
         "MENGUKUR";
 
 
-    // Kirim ke ESP32
+    // =====================================================
+    // KIRIM STATUS KE ESP32
+    // =====================================================
 
     sendMQTT(
         SWITCH2_TOPIC,
         "MENGUKUR"
     );
 
+
+    // =====================================================
+    // UPDATE TAMPILAN
+    // =====================================================
 
     updateSwitchDisplay();
 
@@ -895,13 +918,33 @@ function startMeasurement() {
 
 
     // =====================================================
-    // TIMER 10 MENIT
+    // HENTIKAN TIMER LAMA
     // =====================================================
 
     clearTimeout(
         measurementTimer
     );
 
+
+    clearInterval(
+        measurementClockTimer
+    );
+
+
+    // =====================================================
+    // TIMER JAM 00:00 -> 10:00
+    // =====================================================
+
+    measurementClockTimer =
+        setInterval(
+            updateMeasurementClock,
+            1000
+        );
+
+
+    // =====================================================
+    // TIMER KESELURUHAN 10 MENIT
+    // =====================================================
 
     measurementTimer =
         setTimeout(
@@ -912,8 +955,15 @@ function startMeasurement() {
                 );
 
             },
-            10 * 60 * 1000
+            MEASUREMENT_TOTAL_SECONDS * 1000
         );
+
+
+    // =====================================================
+    // UPDATE AWAL
+    // =====================================================
+
+    updateMeasurementClock();
 
 
     console.log(
@@ -921,6 +971,157 @@ function startMeasurement() {
     );
 }
 
+// =========================================================
+// UPDATE TIMER 00:00 -> 10:00
+// =========================================================
+
+function updateMeasurementClock() {
+
+    if (
+        !measurementActive ||
+        !measurementStartTime
+    ) {
+
+        return;
+    }
+
+
+    // =====================================================
+    // HITUNG DETIK BERJALAN
+    // =====================================================
+
+    const elapsedSeconds =
+        Math.floor(
+            (
+                Date.now() -
+                measurementStartTime
+            ) / 1000
+        );
+
+
+    const safeElapsedSeconds =
+        Math.min(
+            elapsedSeconds,
+            MEASUREMENT_TOTAL_SECONDS
+        );
+
+
+    // =====================================================
+    // MENIT
+    // =====================================================
+
+    const minutes =
+        Math.floor(
+            safeElapsedSeconds / 60
+        );
+
+
+    // =====================================================
+    // DETIK
+    // =====================================================
+
+    const seconds =
+        safeElapsedSeconds % 60;
+
+
+    // =====================================================
+    // FORMAT 00:00
+    // =====================================================
+
+    const timerText =
+        String(minutes).padStart(2, "0") +
+        ":" +
+        String(seconds).padStart(2, "0");
+
+
+    const timerElement =
+        document.getElementById(
+            "measurementTimer"
+        );
+
+
+    if (timerElement) {
+
+        timerElement.textContent =
+            timerText;
+    }
+
+
+    // =====================================================
+    // PROGRESS BAR
+    // =====================================================
+
+    const percentage =
+        (
+            safeElapsedSeconds /
+            MEASUREMENT_TOTAL_SECONDS
+        ) * 100;
+
+
+    const progressBar =
+        document.getElementById(
+            "measurementProgressBar"
+        );
+
+
+    if (progressBar) {
+
+        progressBar.style.width =
+            `${percentage}%`;
+    }
+
+
+    // =====================================================
+    // KETERANGAN BERDASARKAN MENIT
+    // =====================================================
+
+    const description =
+        document.getElementById(
+            "measurementDescription"
+        );
+
+
+    const dataInfo =
+        document.getElementById(
+            "measurementDataInfo"
+        );
+
+
+    if (
+        safeElapsedSeconds < 60
+    ) {
+
+        if (description) {
+
+            description.textContent =
+                "Pengukuran dimulai. Menunggu data menit pertama...";
+        }
+
+
+        if (dataInfo) {
+
+            dataInfo.textContent =
+                "Data pengukuran ke-1 akan diambil pada menit pertama.";
+        }
+
+    } else {
+
+        const currentMinute =
+            Math.min(
+                Math.floor(
+                    safeElapsedSeconds / 60
+                ),
+                10
+            );
+
+
+        if (description) {
+
+            description.textContent =
+                `Sedang mengukur. Menunggu data ke-${currentMinute + 1 > 10 ? 10 : currentMinute + 1}.`;
+        }
+    }
+}
 
 // =========================================================
 // TERIMA DATA rc/data
@@ -956,6 +1157,20 @@ function handleMeasurementData(
 
 
     // =====================================================
+    // HANYA TERIMA DATA SAAT MENGUKUR
+    // =====================================================
+
+    if (!measurementActive) {
+
+        console.log(
+            "Data diterima tetapi tidak ada sesi pengukuran aktif."
+        );
+
+        return;
+    }
+
+
+    // =====================================================
     // VALIDASI MINUTE
     // =====================================================
 
@@ -979,24 +1194,11 @@ function handleMeasurementData(
 
 
     // =====================================================
-    // HANYA TERIMA DATA SAAT MENGUKUR
+    // SIMPAN NOMOR DATA
     // =====================================================
-
-    if (!measurementActive) {
-
-        console.log(
-            "Data diterima tetapi tidak ada sesi pengukuran aktif."
-        );
-
-        return;
-    }
-
 
     measurementMinute =
         minute;
-
-
-    updateMeasurementDisplay();
 
 
     // =====================================================
@@ -1009,7 +1211,60 @@ function handleMeasurementData(
 
 
     // =====================================================
-    // DATA 10 / 10
+    // UPDATE PROGRESS
+    // =====================================================
+
+    updateMeasurementDisplay();
+
+
+    // =====================================================
+    // KETERANGAN DATA
+    // =====================================================
+
+    const dataInfo =
+        document.getElementById(
+            "measurementDataInfo"
+        );
+
+
+    if (dataInfo) {
+
+        dataInfo.textContent =
+            `✓ Data pengukuran ${minute}/10 telah diterima` +
+            ` — CPM: ${Number(data.cpm || 0).toFixed(0)}` +
+            ` — μSv/h: ${Number(data.usv || 0).toFixed(2)}`;
+    }
+
+
+    const description =
+        document.getElementById(
+            "measurementDescription"
+        );
+
+
+    if (description) {
+
+        if (minute < 10) {
+
+            description.textContent =
+                `Data ke-${minute}/10 berhasil diambil. Menunggu pengukuran menit berikutnya...`;
+
+        } else {
+
+            description.textContent =
+                "Data ke-10/10 berhasil diambil. Pengukuran selesai.";
+        }
+    }
+
+
+    console.log(
+        `RAD-V: Data ${minute}/10 diterima`,
+        data
+    );
+
+
+    // =====================================================
+    // DATA 10/10
     // =====================================================
 
     if (
@@ -1121,7 +1376,7 @@ function updateSensorDisplay(
 
 
 // =========================================================
-// UPDATE PROGRESS
+// UPDATE PROGRESS PENGUKURAN
 // =========================================================
 
 function updateMeasurementDisplay() {
@@ -1138,6 +1393,28 @@ function updateMeasurementDisplay() {
         );
 
 
+    const description =
+        document.getElementById(
+            "measurementDescription"
+        );
+
+
+    const dataInfo =
+        document.getElementById(
+            "measurementDataInfo"
+        );
+
+
+    const progressBar =
+        document.getElementById(
+            "measurementProgressBar"
+        );
+
+
+    // =====================================================
+    // SEDANG MENGUKUR
+    // =====================================================
+
     if (measurementActive) {
 
         if (status) {
@@ -1150,10 +1427,61 @@ function updateMeasurementDisplay() {
         if (progress) {
 
             progress.textContent =
-                `DATA ${measurementMinute} / 10`;
+                `${measurementMinute}/10`;
         }
 
-    } else {
+
+        if (progressBar) {
+
+            progressBar.style.width =
+                `${(
+                    measurementMinute /
+                    10
+                ) * 100}%`;
+        }
+
+
+        if (
+            measurementMinute === 0
+        ) {
+
+            if (description) {
+
+                description.textContent =
+                    "Pengukuran dimulai. Menunggu data pertama...";
+            }
+
+
+            if (dataInfo) {
+
+                dataInfo.textContent =
+                    "Belum ada data. Data ke-1 akan diambil setelah 1 menit.";
+            }
+
+        } else {
+
+            if (description) {
+
+                description.textContent =
+                    `Data pengukuran ${measurementMinute}/10 sedang diproses.`;
+            }
+
+
+            if (dataInfo) {
+
+                dataInfo.textContent =
+                    `Data ${measurementMinute}/10 telah diterima.`;
+            }
+        }
+
+
+    }
+
+    // =====================================================
+    // SELESAI
+    // =====================================================
+
+    else {
 
         if (status) {
 
@@ -1165,7 +1493,36 @@ function updateMeasurementDisplay() {
         if (progress) {
 
             progress.textContent =
-                "-";
+                measurementMinute >= 10
+                    ? "10/10"
+                    : "0/10";
+        }
+
+
+        if (progressBar) {
+
+            progressBar.style.width =
+                measurementMinute >= 10
+                    ? "100%"
+                    : "0%";
+        }
+
+
+        if (description) {
+
+            description.textContent =
+                measurementMinute >= 10
+                    ? "Pengukuran 10 menit telah selesai."
+                    : "Aktifkan saklar SELESAI untuk memulai pengukuran.";
+        }
+
+
+        if (dataInfo) {
+
+            dataInfo.textContent =
+                measurementMinute >= 10
+                    ? "✓ 10/10 data pengukuran telah selesai."
+                    : "Belum ada data pengukuran.";
         }
     }
 }
@@ -1188,6 +1545,10 @@ function finishMeasurement(
     measurementActive = false;
 
 
+    // =====================================================
+    // HENTIKAN TIMER 10 MENIT
+    // =====================================================
+
     clearTimeout(
         measurementTimer
     );
@@ -1196,13 +1557,49 @@ function finishMeasurement(
     measurementTimer = null;
 
 
-    // Kembali ke SELESAI
+    // =====================================================
+    // HENTIKAN TIMER JAM
+    // =====================================================
+
+    clearInterval(
+        measurementClockTimer
+    );
+
+
+    measurementClockTimer = null;
+
+
+    // =====================================================
+    // JIKA TIMEOUT, PASTIKAN 10/10
+    // =====================================================
+
+    if (
+        reason === "TIMEOUT" &&
+        measurementMinute < 10
+    ) {
+
+        measurementMinute = 10;
+    }
+
+
+    // =====================================================
+    // RESET WAKTU MULAI
+    // =====================================================
+
+    measurementStartTime = null;
+
+
+    // =====================================================
+    // KEMBALI KE SELESAI
+    // =====================================================
 
     switch2State =
         "SELESAI";
 
 
-    // Kirim ke ESP32
+    // =====================================================
+    // KIRIM KE ESP32
+    // =====================================================
 
     sendMQTT(
         SWITCH2_TOPIC,
@@ -1210,11 +1607,111 @@ function finishMeasurement(
     );
 
 
+    // =====================================================
+    // UPDATE TAMPILAN
+    // =====================================================
+
     updateSwitchDisplay();
 
     updateMeasurementDisplay();
 
     updateControlState();
+
+
+    // =====================================================
+    // TIMER TAMPILAN
+    // =====================================================
+
+    const timerElement =
+        document.getElementById(
+            "measurementTimer"
+        );
+
+
+    if (timerElement) {
+
+        if (
+            measurementMinute >= 10
+        ) {
+
+            timerElement.textContent =
+                "10:00";
+
+        } else {
+
+            timerElement.textContent =
+                "00:00";
+        }
+    }
+
+
+    // =====================================================
+    // PROGRESS BAR
+    // =====================================================
+
+    const progressBar =
+        document.getElementById(
+            "measurementProgressBar"
+        );
+
+
+    if (progressBar) {
+
+        progressBar.style.width =
+            measurementMinute >= 10
+                ? "100%"
+                : "0%";
+    }
+
+
+    // =====================================================
+    // KETERANGAN
+    // =====================================================
+
+    const description =
+        document.getElementById(
+            "measurementDescription"
+        );
+
+
+    const dataInfo =
+        document.getElementById(
+            "measurementDataInfo"
+        );
+
+
+    if (
+        measurementMinute >= 10
+    ) {
+
+        if (description) {
+
+            description.textContent =
+                "✓ Pengukuran selesai — 10/10 data telah diterima.";
+        }
+
+
+        if (dataInfo) {
+
+            dataInfo.textContent =
+                "✓ Semua 10 data pengukuran berhasil diselesaikan.";
+        }
+
+    } else {
+
+        if (description) {
+
+            description.textContent =
+                "Pengukuran dihentikan sebelum 10 menit.";
+        }
+
+
+        if (dataInfo) {
+
+            dataInfo.textContent =
+                `Pengukuran berhenti pada data ${measurementMinute}/10.`;
+        }
+    }
 
 
     console.log(
