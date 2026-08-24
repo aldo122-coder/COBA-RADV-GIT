@@ -555,7 +555,7 @@ h1 {
 .measurement-progress-wrapper {
     width: 100%;
 
-    margin-bottom: 18px;
+    margin-bottom: 10px;
 }
 
 
@@ -2194,4 +2194,18 @@ body.pin-locked {
     line-height: 1.5;
 
     text-align: center;
+}
+
+/* =========================================================
+   HILANGKAN INFORMASI YANG TIDAK DIPERLUKAN
+========================================================= */
+
+/* Hapus panel "Belum ada pengukuran." */
+.measurement-detail {
+    display: none !important;
+}
+
+/* Hapus tulisan DATA 0 / 10 di sebelah kanan progress bar */
+.measurement-progress-text {
+    display: none !important;
 }
