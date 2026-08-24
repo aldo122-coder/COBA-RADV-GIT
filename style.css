@@ -2311,38 +2311,3 @@ body.pin-locked {
     display: none !important;
 }
 
-/* =========================================================
-   FIX MOBILE STATUS
-========================================================= */
-
-.measurement-summary {
-    width: 100%;
-    min-width: 0 !important;
-}
-
-.measurement-info {
-    width: 100% !important;
-    min-width: 0 !important;
-    max-width: 100% !important;
-    overflow: hidden !important;
-}
-
-#measurementStatus {
-    display: block !important;
-
-    width: 100% !important;
-    max-width: 100% !important;
-
-    font-size: 12px !important;
-    font-weight: bold !important;
-
-    line-height: 1.1 !important;
-
-    white-space: nowrap !important;
-    word-break: normal !important;
-    overflow-wrap: normal !important;
-
-    text-align: center !important;
-
-    overflow: hidden !important;
-}
