@@ -389,11 +389,15 @@ h1 {
 
     color: #ffffff;
 
+    font-family: Arial, Helvetica, sans-serif;
+
     font-size: 24px;
 
-    font-weight: 500;
+    font-weight: bold;
 
-    letter-spacing: 0;
+    line-height: normal;
+
+    letter-spacing: normal;
 }
 
 
@@ -483,17 +487,20 @@ h1 {
 .measurement-info span {
     display: block;
 
-    margin-bottom: 10px;
+    margin-bottom: 12px;
 
     color: #aeb8c8;
 
+    font-family: Arial, Helvetica, sans-serif;
+
     font-size: 16px;
 
-    font-weight: 400;
+    font-weight: bold;
 
-    letter-spacing: 0;
+    line-height: normal;
+
+    letter-spacing: normal;
 }
-
 
 /* NILAI */
 
@@ -502,13 +509,15 @@ h1 {
 
     color: #ffffff;
 
+    font-family: Arial, Helvetica, sans-serif;
+
     font-size: 28px;
 
-    font-weight: 400;
+    font-weight: bold;
 
-    line-height: 1.2;
+    line-height: normal;
 
-    letter-spacing: 0;
+    letter-spacing: normal;
 }
 
 
@@ -1776,13 +1785,17 @@ body.pin-locked {
         padding: 12px 6px;
     }
 
-    .measurement-info span {
-        font-size: 11px;
-    }
+   .measurement-info span {
+    font-size: 15px;
 
-    .measurement-info strong {
-        font-size: 18px;
-    }
+    font-weight: bold;
+}
+
+.measurement-info strong {
+    font-size: 23px;
+
+    font-weight: bold;
+}
 
     .measurement-progress-track {
         height: 12px;
@@ -2005,13 +2018,17 @@ body.pin-locked {
     }
 
     .measurement-info span {
-        font-size: 8px;
-    }
+    font-size: 16px;
 
-    .measurement-info strong {
-        font-size: 16px;
-    }
+    font-weight: bold;
+}
 
+.measurement-info strong {
+    font-size: 20px;
+
+    font-weight: bold;
+}
+   
     .measurement-progress-track {
         height: 10px;
     }
