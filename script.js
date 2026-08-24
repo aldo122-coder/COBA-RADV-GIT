@@ -48,14 +48,14 @@ let activeControl = null;
 // STOP = pengukuran boleh dimulai
 // JALAN = kontrol RC aktif
 
-let switch1State = "STOP";
+let switch1State = "BERHENTI";
 
 
 // Saklar 2:
 // SELESAI = tidak mengukur
 // MENGUKUR = sedang mengukur
 
-let switch2State = "SELESAI";
+let switch2State = "SENSOR";
 
 
 // Status pengukuran
@@ -577,7 +577,7 @@ function updateControlState() {
     // -----------------------------------------------------
 
     if (
-        switch1State === "STOP"
+        switch1State === "BERHENTI"
     ) {
 
         // RC disabled
@@ -692,9 +692,9 @@ function toggleSwitch(number) {
 
 
         const newState =
-            switch1State === "STOP"
+            switch1State === "BERHENTI"
                 ? "JALAN"
-                : "STOP";
+                : "BERHENTI";
 
 
         const sent =
@@ -721,13 +721,13 @@ function toggleSwitch(number) {
         // Kalau pindah ke STOP,
         // pastikan kontrol RC dihentikan.
 
-        if (newState === "STOP") {
+        if (newState === "BERHENTI") {
 
             if (activeControl !== null) {
 
                 sendMQTT(
                     CONTROL_TOPIC,
-                    "STOP"
+                    "BERHENTI"
                 );
 
                 activeControl = null;
@@ -764,10 +764,10 @@ function toggleSwitch(number) {
 
         // Pengukuran hanya boleh saat Saklar 1 STOP
 
-        if (switch1State !== "STOP") {
+        if (switch1State !== "BERHENTI") {
 
             console.warn(
-                "Pengukuran hanya boleh dimulai saat Saklar 1 STOP."
+                "Pengukuran hanya boleh dimulai saat Saklar 1 BERHENTI."
             );
 
             return;
@@ -1012,10 +1012,10 @@ function startMeasurement() {
 
 
     // Saklar 1 harus STOP
-    if (switch1State !== "STOP") {
+    if (switch1State !== "BERHENTI") {
 
         console.warn(
-            "Pengukuran hanya boleh dimulai saat Saklar 1 STOP."
+            "Pengukuran hanya boleh dimulai saat Saklar 1 BERHENTI."
         );
 
         return;
@@ -1624,7 +1624,7 @@ function updateMeasurementDisplay() {
         status.textContent =
             measurementActive
                 ? "MENGUKUR"
-                : "SELESAI";
+                : "SENSOR";
     }
 
 
@@ -1746,7 +1746,7 @@ function updateMeasurementDisplay() {
             if (description) {
 
                 description.textContent =
-                    "Aktifkan saklar SELESAI untuk memulai pengukuran.";
+                    "Aktifkan saklar SENSOR untuk memulai pengukuran.";
             }
 
             if (dataInfo) {
@@ -1834,7 +1834,7 @@ if (measurementPanel) {
     measurementStartTime = null;
 
     switch2State =
-        "SELESAI";
+        "SENSOR";
 
 
     // =====================================================
@@ -1843,7 +1843,7 @@ if (measurementPanel) {
 
     sendMQTT(
         SWITCH2_TOPIC,
-        "SELESAI"
+        "SENSOR"
     );
 
 
@@ -2053,13 +2053,13 @@ function releaseControl(
   const sent =
     sendMQTT(
         CONTROL_TOPIC,
-        "STOP"
+        "BERHENTI"
     );
 
 if (!sent) {
 
     console.error(
-        "STOP gagal dikirim ke ESP32."
+        "BERHENTI gagal dikirim ke ESP32."
     );
 
     return;
@@ -2094,7 +2094,7 @@ activeControl =
     if (commandDisplay) {
 
         commandDisplay.innerText =
-            "STOP";
+            "BERHENTI";
     }
 }
 
@@ -2221,29 +2221,29 @@ function switch1Stop() {
         return;
     }
 
-    if (switch1State === "STOP") {
+    if (switch1State === "BERHENTI") {
         return;
     }
 
     const sent = sendMQTT(
         SWITCH1_TOPIC,
-        "STOP"
+        "BERHENTI"
     );
 
     if (!sent) {
         console.warn(
-            "Gagal mengirim STOP ke ESP32."
+            "Gagal mengirim BERHENTI ke ESP32."
         );
         return;
     }
 
-    switch1State = "STOP";
+    switch1State = "BERHENTI";
 
     if (activeControl !== null) {
 
         sendMQTT(
             CONTROL_TOPIC,
-            "STOP"
+            "BERHENTI"
         );
 
         activeControl = null;
@@ -2260,7 +2260,7 @@ function switch2Mengukur() {
         return;
     }
 
-    if (switch1State !== "STOP") {
+    if (switch1State !== "BERHENTI") {
         return;
     }
 
@@ -2414,7 +2414,7 @@ document.addEventListener(
         ) {
 
             console.log(
-                "KEYBOARD LOCK: Saklar 1 masih STOP"
+                "KEYBOARD LOCK: Saklar 1 masih BERHENTI"
             );
 
             return;
