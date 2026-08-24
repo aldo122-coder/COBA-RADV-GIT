@@ -1288,25 +1288,32 @@ function renderSpreadsheetTable(
 
     head.innerHTML = `
 
-        <tr>
+    <tr>
 
-            <th>No.</th>
+        <th>No.</th>
 
-            ${headers
-                .map(
-                    header =>
-                        `<th>${escapeHtml(
-                            header || "-"
-                        )}</th>`
-                )
-                .join("")
-            }
+        ${headers
+            .map((header, colIndex) => {
 
-            <th>Peta</th>
+                // Jangan tampilkan kolom F
+                if (colIndex === 5) {
+                    return "";
+                }
 
-        </tr>
-    `;
+                return `
+                    <th>
+                        ${escapeHtml(header || "-")}
+                    </th>
+                `;
 
+            })
+            .join("")
+        }
+
+        <th>Peta</th>
+
+    </tr>
+`;
 
     body.innerHTML = "";
 
@@ -1465,80 +1472,75 @@ const isLatest =
         ----------------------------------------- */
 
         const values =
-            headers
-                .map(
-                    (header, colIndex) => {
+    headers
+        .map(
+            (header, colIndex) => {
 
-                        let value;
+                // Jangan tampilkan kolom F
+                if (colIndex === 5) {
+                    return "";
+                }
 
+                let value;
 
-                        if (
-                            colIndex ===
-                            timestampIndex
-                        ) {
+                if (
+                    colIndex === timestampIndex
+                ) {
 
-                            value =
-                                formatTimestamp(
-                                    row,
-                                    colIndex
-                                );
+                    value =
+                        formatTimestamp(
+                            row,
+                            colIndex
+                        );
 
-                        } else {
+                } else {
 
-                            value =
-                                formatCellValue(
-                                    valueFromCell(
-                                        row,
-                                        colIndex
-                                    )
-                                );
-                        }
+                    value =
+                        formatCellValue(
+                            valueFromCell(
+                                row,
+                                colIndex
+                            )
+                        );
+                }
 
+                let className = "";
 
-                        /* --------------------------------
-                           WARNA RADIATION
-                        -------------------------------- */
+                if (
+                    colIndex === usvIndex
+                ) {
 
-                        let className = "";
+                    if (
+                        level === "safe"
+                    ) {
 
+                        className =
+                            "radiation-low";
 
-                        if (
-                            colIndex ===
-                            usvIndex
-                        ) {
+                    } else if (
+                        level === "medium"
+                    ) {
 
-                            if (
-                                level === "safe"
-                            ) {
+                        className =
+                            "radiation-medium";
 
-                                className =
-                                    "radiation-low";
+                    } else if (
+                        level === "high"
+                    ) {
 
-                            } else if (
-                                level === "medium"
-                            ) {
-
-                                className =
-                                    "radiation-medium";
-
-                            } else if (
-                                level === "high"
-                            ) {
-
-                                className =
-                                    "radiation-high";
-                            }
-                        }
-
-
-                        return `
-                            <td class="${className}">
-                                ${escapeHtml(value)}
-                            </td>
-                        `;
+                        className =
+                            "radiation-high";
                     }
-                )
-                .join("");
+                }
+
+                return `
+                    <td class="${className}">
+                        ${escapeHtml(value)}
+                    </td>
+                `;
+            }
+        )
+        .join("");
 
 
         /* -----------------------------------------
