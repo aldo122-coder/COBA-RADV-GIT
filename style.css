@@ -2310,3 +2310,30 @@ body.pin-locked {
 .measurement-progress-text {
     display: none !important;
 }
+
+/* =========================================================
+   FIX STATUS MENGUKUR AGAR SELALU 1 BARIS
+========================================================= */
+
+#measurementStatus {
+    display: block !important;
+
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+
+    font-size: 12px !important;
+    font-weight: bold !important;
+
+    line-height: 1.1 !important;
+
+    white-space: nowrap !important;
+
+    word-break: normal !important;
+    overflow-wrap: normal !important;
+
+    text-align: center !important;
+
+    overflow: hidden !important;
+    text-overflow: clip !important;
+}
