@@ -1624,7 +1624,7 @@ function updateMeasurementDisplay() {
         status.textContent =
             measurementActive
                 ? "MENGUKUR"
-                : "SENSOR OFF";
+                : "OFF";
     }
 
 
