@@ -107,7 +107,7 @@
 
    <!-- =====================================================
      CONTROL RAD-V
-     ===================================================== -->
+===================================================== -->
 
 <div class="control-section">
 
@@ -116,14 +116,12 @@
 
     <!-- =================================================
          SAKLAR
-         ================================================= -->
+    ================================================== -->
 
     <div class="switch-container">
 
 
-        <!-- =========================
-             SAKLAR 1 - STOP / JALAN
-             ========================= -->
+        <!-- SAKLAR 1 -->
 
         <div class="switch-card switch-card-stop">
 
@@ -132,9 +130,7 @@
                 id="switch1"
                 onclick="toggleSwitch(1)"
             >
-
                 <div class="switch-circle"></div>
-
             </div>
 
             <div
@@ -147,9 +143,7 @@
         </div>
 
 
-        <!-- =========================
-             SAKLAR 2 - SELESAI / MENGUKUR
-             ========================= -->
+        <!-- SAKLAR 2 -->
 
         <div class="switch-card switch-card-measurement">
 
@@ -158,9 +152,7 @@
                 id="switch2"
                 onclick="toggleSwitch(2)"
             >
-
                 <div class="switch-circle"></div>
-
             </div>
 
             <div
@@ -172,13 +164,12 @@
 
         </div>
 
-
     </div>
 
 
     <!-- =================================================
          PROGRESS PENGUKURAN
-         ================================================= -->
+    ================================================== -->
 
     <div
         id="measurementPanel"
@@ -186,72 +177,60 @@
     >
 
         <div class="measurement-panel-title">
-            PROGRESS PENGUKURAN
+
+            <span>
+                PROGRESS PENGUKURAN
+            </span>
+
+            <span
+                class="measurement-live-dot"
+                id="measurementLiveDot"
+            ></span>
+
         </div>
 
 
-        <!-- STATUS + DATA + TIMER -->
+        <!-- STATUS / DATA / TIMER -->
 
         <div class="measurement-summary">
 
 
-            <!-- STATUS -->
-
             <div class="measurement-info">
 
-                <span>
-                    STATUS
-                </span>
+                <span>STATUS</span>
 
-                <strong
-                    id="measurementStatus"
-                >
+                <strong id="measurementStatus">
                     SELESAI
                 </strong>
 
             </div>
 
 
-            <!-- DATA -->
-
             <div class="measurement-info">
 
-                <span>
-                    DATA
-                </span>
+                <span>DATA</span>
 
-                <strong
-                    id="measurementProgress"
-                >
+                <strong id="measurementProgress">
                     0/10
                 </strong>
 
             </div>
 
 
-            <!-- TIMER -->
-
             <div class="measurement-info">
 
-                <span>
-                    WAKTU
-                </span>
+                <span>WAKTU</span>
 
-                <strong
-                    id="measurementTimer"
-                >
+                <strong id="measurementTimer">
                     00:00
                 </strong>
 
             </div>
 
-
         </div>
 
 
-        <!-- =================================================
-             PROGRESS BAR
-             ================================================= -->
+        <!-- PROGRESS BAR -->
 
         <div class="measurement-progress-wrapper">
 
@@ -275,9 +254,7 @@
         </div>
 
 
-        <!-- =================================================
-             DETAIL
-             ================================================= -->
+        <!-- DETAIL -->
 
         <div
             id="measurementDetail"
@@ -287,9 +264,7 @@
         </div>
 
 
-        <!-- =================================================
-             KETERANGAN PROSES
-             ================================================= -->
+        <!-- KETERANGAN -->
 
         <div
             id="measurementDescription"
@@ -299,9 +274,7 @@
         </div>
 
 
-        <!-- =================================================
-             INFORMASI DATA
-             ================================================= -->
+        <!-- DATA -->
 
         <div
             id="measurementDataInfo"
@@ -309,7 +282,6 @@
         >
             Belum ada data pengukuran.
         </div>
-
 
     </div>
 
