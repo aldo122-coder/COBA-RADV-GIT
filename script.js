@@ -1623,7 +1623,7 @@ function updateMeasurementDisplay() {
 
         status.textContent =
             measurementActive
-                ? "MENGUKUR"
+                ? "ON"
                 : "OFF";
     }
 
