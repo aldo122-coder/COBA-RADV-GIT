@@ -2195,3 +2195,11 @@ body.pin-locked {
 
     text-align: center;
 }
+
+/* =========================================================
+   SEMBUNYIKAN PANEL "MENUNGGU DATA PENGUKURAN PERTAMA"
+========================================================= */
+
+.measurement-detail {
+    display: none !important;
+}
