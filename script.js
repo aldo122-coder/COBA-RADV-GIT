@@ -2019,40 +2019,22 @@ function sendRTB() {
 function switch1Jalan() {
 
     if (!radVAuthenticated) {
-
         return;
     }
-
-
-    if (measurementActive) {
-
-        return;
-    }
-
-
-    function switch1Jalan() {
-
-    if (!radVAuthenticated) {
-        return;
-    }
-
 
     if (measurementActive) {
         return;
     }
-
 
     if (switch1State === "JALAN") {
         return;
     }
-
 
     const sent =
         sendMQTT(
             SWITCH1_TOPIC,
             "JALAN"
         );
-
 
     if (!sent) {
 
@@ -2063,15 +2045,10 @@ function switch1Jalan() {
         return;
     }
 
-
-    switch1State =
-        "JALAN";
-
+    switch1State = "JALAN";
 
     updateSwitchDisplay();
-
     updateControlState();
-}
 }
 
 
@@ -2081,23 +2058,19 @@ function switch1Stop() {
         return;
     }
 
-
     if (measurementActive) {
         return;
     }
 
-
     if (switch1State === "STOP") {
         return;
     }
-
 
     const sent =
         sendMQTT(
             SWITCH1_TOPIC,
             "STOP"
         );
-
 
     if (!sent) {
 
@@ -2108,40 +2081,35 @@ function switch1Stop() {
         return;
     }
 
+    switch1State = "STOP";
 
-    switch1State =
-        "STOP";
+    // Hentikan kontrol RC jika masih aktif
+    if (activeControl !== null) {
 
+        sendMQTT(
+            CONTROL_TOPIC,
+            "STOP"
+        );
 
-    // Jika ada kontrol aktif, bersihkan
-    activeControl = null;
-
+        activeControl = null;
+    }
 
     updateSwitchDisplay();
-
     updateControlState();
-}
 }
 
 
 function switch2Mengukur() {
 
     if (!radVAuthenticated) {
-
         return;
     }
 
-
-    if (
-        switch1State !== "STOP"
-    ) {
-
+    if (switch1State !== "STOP") {
         return;
     }
-
 
     if (!measurementActive) {
-
         startMeasurement();
     }
 }
@@ -2150,10 +2118,8 @@ function switch2Mengukur() {
 function switch2Selesai() {
 
     if (!radVAuthenticated) {
-
         return;
     }
-
 
     if (measurementActive) {
 
