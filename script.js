@@ -2030,18 +2030,15 @@ function switch1Jalan() {
         return;
     }
 
-    const sent =
-        sendMQTT(
-            SWITCH1_TOPIC,
-            "JALAN"
-        );
+    const sent = sendMQTT(
+        SWITCH1_TOPIC,
+        "JALAN"
+    );
 
     if (!sent) {
-
         console.warn(
             "Gagal mengirim JALAN ke ESP32."
         );
-
         return;
     }
 
@@ -2066,24 +2063,20 @@ function switch1Stop() {
         return;
     }
 
-    const sent =
-        sendMQTT(
-            SWITCH1_TOPIC,
-            "STOP"
-        );
+    const sent = sendMQTT(
+        SWITCH1_TOPIC,
+        "STOP"
+    );
 
     if (!sent) {
-
         console.warn(
             "Gagal mengirim STOP ke ESP32."
         );
-
         return;
     }
 
     switch1State = "STOP";
 
-    // Hentikan kontrol RC jika masih aktif
     if (activeControl !== null) {
 
         sendMQTT(
@@ -2122,10 +2115,7 @@ function switch2Selesai() {
     }
 
     if (measurementActive) {
-
-        finishMeasurement(
-            "MANUAL"
-        );
+        finishMeasurement("MANUAL");
     }
 }
 
