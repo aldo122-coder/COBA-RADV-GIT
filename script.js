@@ -928,6 +928,15 @@ function startMeasurement() {
 
     measurementActive = true;
 
+    const measurementPanel =
+    document.getElementById(
+        "measurementPanel"
+    );
+
+if (measurementPanel) {
+    measurementPanel.classList.add("active");
+}
+    
     measurementMinute = 0;
 
     measurementStartTime =
@@ -1651,6 +1660,15 @@ function finishMeasurement(reason) {
 
     measurementActive = false;
 
+const measurementPanel =
+    document.getElementById(
+        "measurementPanel"
+    );
+
+if (measurementPanel) {
+    measurementPanel.classList.remove("active");
+}
+    
     measurementStartTime = null;
 
     switch2State =
