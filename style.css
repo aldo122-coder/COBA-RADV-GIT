@@ -2311,3 +2311,34 @@ body.pin-locked {
     display: none !important;
 }
 
+/* DESKTOP */
+#measurementStatus {
+    font-size: 28px !important;
+    font-weight: 700 !important;
+    line-height: 1.15 !important;
+    white-space: nowrap !important;
+}
+
+
+/* MOBILE */
+@media (max-width: 700px) {
+    #measurementStatus {
+        font-size: 17px !important;
+    }
+}
+
+
+/* HP KECIL */
+@media (max-width: 450px) {
+    #measurementStatus {
+        font-size: 16px !important;
+    }
+}
+
+
+/* HP SANGAT KECIL */
+@media (max-width: 380px) {
+    #measurementStatus {
+        font-size: 15px !important;
+    }
+}
