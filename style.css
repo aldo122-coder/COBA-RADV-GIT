@@ -2086,17 +2086,13 @@ body.pin-locked {
     max-width: 100%;
     min-width: 0;
 
-    font-size: 17px;
+    font-size: 14px;
 
     font-weight: bold;
 
     line-height: 1.15;
 
-    white-space: normal;
-
-    overflow-wrap: anywhere;
-
-    word-break: break-word;
+    white-space: nowrap;
 
     text-align: center;
 
@@ -2268,18 +2264,18 @@ body.pin-locked {
         font-size: 16px;
     }
 
-   .measurement-info strong {
-    font-size: 15px;
+  .measurement-info strong {
+    font-size: 14px;
 
     width: 100%;
     max-width: 100%;
     min-width: 0;
 
-    white-space: normal;
-    overflow-wrap: anywhere;
-    word-break: break-word;
+    white-space: nowrap;
 
     text-align: center;
+
+    overflow: hidden;
 }
 }
 
