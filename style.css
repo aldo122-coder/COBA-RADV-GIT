@@ -158,77 +158,498 @@ h1 {
 
 
 /* =========================================================
-   SWITCH
+   SWITCH RAD-V
 ========================================================= */
 
 .switch-container {
 
-    display: grid;
+    display: flex;
 
-    grid-template-columns: 1fr 1fr;
+    flex-direction: column;
 
-    gap: 20px;
+    align-items: center;
+
+    gap: 14px;
+
+    width: 100%;
+
+    margin: 0 auto;
 }
+
+
+/* =========================================================
+   SWITCH CARD
+========================================================= */
 
 .switch-card {
 
+    width: 100%;
+
+    max-width: 360px;
+
     background: #141a24;
 
-    padding: 20px;
+    border: 1px solid #2d3748;
 
-    border-radius: 12px;
+    border-radius: 14px;
+
+    padding: 18px 20px;
 
     text-align: center;
+
+    transition:
+        border-color 0.2s ease,
+        background 0.2s ease,
+        opacity 0.2s ease;
 }
 
-.switch-card h3 {
-    margin-bottom: 15px;
+
+/* =========================================================
+   SWITCH CARD STOP
+========================================================= */
+
+.switch-card-stop {
+
+    border-color: #374151;
 }
+
+
+/* =========================================================
+   SWITCH CARD PENGUKURAN
+========================================================= */
+
+.switch-card-measurement {
+
+    border-color: #374151;
+
+    margin-bottom: 2px;
+}
+
+
+/* =========================================================
+   SWITCH
+========================================================= */
 
 .switch {
 
-    width: 75px;
-    height: 38px;
+    width: 78px;
 
-    background: #555;
+    height: 40px;
+
+    background: #4b5563;
 
     border-radius: 30px;
 
-    margin: auto;
+    margin: 0 auto;
 
-    padding: 4px;
+    padding: 5px;
 
     cursor: pointer;
 
-    transition: 0.3s ease;
+    transition:
+        background 0.25s ease,
+        box-shadow 0.25s ease;
 }
+
+
+/* =========================================================
+   SWITCH CIRCLE
+========================================================= */
 
 .switch-circle {
 
     width: 30px;
+
     height: 30px;
 
     background: #ffffff;
 
     border-radius: 50%;
 
-    transition: 0.3s ease;
+    transition:
+        transform 0.25s ease;
 }
+
+
+/* =========================================================
+   SWITCH AKTIF
+========================================================= */
 
 .switch.active {
+
     background: #16a34a;
+
+    box-shadow:
+        0 0 0 3px rgba(22, 163, 74, 0.15);
 }
+
 
 .switch.active .switch-circle {
-    transform: translateX(37px);
+
+    transform: translateX(38px);
 }
 
+
+/* =========================================================
+   SWITCH STATUS
+========================================================= */
+
 .switch-status {
-    margin-top: 12px;
+
+    margin-top: 11px;
+
+    font-size: 15px;
+
+    font-weight: bold;
+
+    letter-spacing: 0.5px;
+
+    color: #e5e7eb;
+}
+
+
+/* =========================================================
+   SWITCH DISABLED
+========================================================= */
+
+.switch.disabled {
+
+    opacity: 0.35;
+
+    cursor: not-allowed;
+
+    pointer-events: none;
+}
+
+/* =========================================================
+   PANEL PROGRESS PENGUKURAN
+========================================================= */
+
+.measurement-panel {
+
+    width: 100%;
+
+    max-width: 650px;
+
+    margin: 16px auto 0;
+
+    padding: 20px;
+
+    background: #141a24;
+
+    border: 1px solid #2d3748;
+
+    border-radius: 15px;
+
+    box-shadow:
+        0 8px 25px rgba(0, 0, 0, 0.18);
+}
+
+
+/* =========================================================
+   JUDUL PANEL
+========================================================= */
+
+.measurement-panel-title {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 10px;
+
+    margin-bottom: 18px;
+
+    color: #ffffff;
+
+    font-size: 15px;
+
+    font-weight: bold;
+
+    letter-spacing: 0.5px;
+}
+
+
+/* =========================================================
+   INDIKATOR LIVE
+========================================================= */
+
+.measurement-live-dot {
+
+    width: 9px;
+
+    height: 9px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: #6b7280;
+
+    box-shadow: none;
+
+    transition:
+        background 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+
+/* Saat pengukuran aktif */
+
+.measurement-panel.active
+.measurement-live-dot {
+
+    background: #22c55e;
+
+    box-shadow:
+        0 0 0 4px rgba(34, 197, 94, 0.15),
+        0 0 10px rgba(34, 197, 94, 0.7);
+}
+
+
+/* =========================================================
+   SUMMARY
+========================================================= */
+
+.measurement-summary {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 8px;
+
+    margin-bottom: 15px;
+}
+
+
+/* =========================================================
+   INFO
+========================================================= */
+
+.measurement-info {
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-height: 68px;
+
+    padding: 10px;
+
+    background: #1b2230;
+
+    border: 1px solid #252f40;
+
+    border-radius: 10px;
+
+    text-align: center;
+}
+
+
+.measurement-info span {
+
+    margin-bottom: 6px;
+
+    color: #7f8a9a;
+
+    font-size: 10px;
+
+    font-weight: bold;
+
+    letter-spacing: 0.7px;
+}
+
+
+.measurement-info strong {
+
+    color: #22c55e;
+
+    font-size: 17px;
 
     font-weight: bold;
 }
 
+
+/* STATUS */
+
+#measurementStatus {
+
+    color: #f59e0b;
+}
+
+
+/* DATA */
+
+#measurementProgress {
+
+    color: #22c55e;
+}
+
+
+/* TIMER */
+
+#measurementTimer {
+
+    color: #60a5fa;
+}
+
+
+/* =========================================================
+   PROGRESS BAR WRAPPER
+========================================================= */
+
+.measurement-progress-wrapper {
+
+    width: 100%;
+
+    margin-top: 5px;
+}
+
+
+/* =========================================================
+   PROGRESS TRACK
+========================================================= */
+
+.measurement-progress-track {
+
+    width: 100%;
+
+    height: 12px;
+
+    overflow: hidden;
+
+    background: #0f141d;
+
+    border: 1px solid #2d3748;
+
+    border-radius: 20px;
+}
+
+
+/* =========================================================
+   PROGRESS BAR
+========================================================= */
+
+.measurement-progress-bar {
+
+    width: 0%;
+
+    height: 100%;
+
+    background:
+        linear-gradient(
+            90deg,
+            #16a34a,
+            #22c55e
+        );
+
+    border-radius: 20px;
+
+    transition:
+        width 0.5s ease;
+}
+
+
+/* =========================================================
+   PROGRESS TEXT
+========================================================= */
+
+.measurement-progress-text {
+
+    margin-top: 7px;
+
+    text-align: right;
+
+    color: #9ca3af;
+
+    font-size: 11px;
+
+    font-weight: bold;
+
+    letter-spacing: 0.4px;
+}
+
+
+/* =========================================================
+   DETAIL
+========================================================= */
+
+.measurement-detail {
+
+    margin-top: 15px;
+
+    padding: 11px 12px;
+
+    background: #1b2230;
+
+    border-radius: 9px;
+
+    color: #cbd5e1;
+
+    font-size: 12px;
+
+    line-height: 1.5;
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   KETERANGAN
+========================================================= */
+
+.measurement-description {
+
+    margin-top: 8px;
+
+    padding: 11px 12px;
+
+    background: #1b2230;
+
+    border-radius: 9px;
+
+    color: #9ca3af;
+
+    font-size: 12px;
+
+    line-height: 1.5;
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   INFO DATA
+========================================================= */
+
+.measurement-data-info {
+
+    margin-top: 8px;
+
+    padding: 11px 12px;
+
+    background: #10141c;
+
+    border: 1px solid #252f40;
+
+    border-radius: 9px;
+
+    color: #aeb8c8;
+
+    font-size: 12px;
+
+    line-height: 1.5;
+
+    text-align: center;
+}
 
 /* =========================================================
    RAD-V CONTROL
@@ -1088,14 +1509,80 @@ footer {
     }
 
 
-    /* SWITCH */
+   /* =====================================================
+   SWITCH MOBILE
+===================================================== */
 
-    .switch-container {
+.switch-container {
 
-        grid-template-columns: 1fr;
+    flex-direction: column;
 
-        gap: 10px;
-    }
+    align-items: center;
+
+    gap: 10px;
+}
+
+
+.switch-card {
+
+    max-width: 100%;
+
+    padding: 16px;
+}
+
+
+.measurement-panel {
+
+    max-width: 100%;
+
+    padding: 16px;
+
+    margin-top: 12px;
+}
+
+
+.measurement-summary {
+
+    gap: 6px;
+}
+
+
+.measurement-info {
+
+    min-height: 64px;
+
+    padding: 8px 5px;
+}
+
+
+.measurement-info span {
+
+    font-size: 9px;
+}
+
+
+.measurement-info strong {
+
+    font-size: 15px;
+}
+
+
+.measurement-panel-title {
+
+    font-size: 14px;
+
+    margin-bottom: 14px;
+}
+
+
+.measurement-detail,
+.measurement-description,
+.measurement-data-info {
+
+    font-size: 11px;
+
+    padding: 10px;
+}
 
 
     /* RC */
@@ -1237,6 +1724,81 @@ footer {
 
         gap: 10px;
     }
+   /* =====================================================
+   MEASUREMENT - SMALL MOBILE
+===================================================== */
+
+.measurement-panel {
+
+    padding: 14px;
+
+    border-radius: 12px;
+}
+
+
+.switch-card {
+
+    padding: 15px 12px;
+
+    border-radius: 12px;
+}
+
+
+.switch {
+
+    width: 74px;
+
+    height: 38px;
+}
+
+
+.switch-circle {
+
+    width: 28px;
+
+    height: 28px;
+}
+
+
+.switch.active .switch-circle {
+
+    transform: translateX(36px);
+}
+
+
+.measurement-summary {
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 5px;
+}
+
+
+.measurement-info {
+
+    min-height: 60px;
+
+    padding: 7px 3px;
+}
+
+
+.measurement-info strong {
+
+    font-size: 14px;
+}
+
+
+.measurement-info span {
+
+    font-size: 8px;
+}
+
+
+.measurement-progress-track {
+
+    height: 10px;
+}
 }
 
 /* =========================================================
@@ -1573,13 +2135,3 @@ body.pin-locked {
     pointer-events: none;
 }
 
-
-/* STATUS PENGUKURAN */
-
-#measurementStatus {
-    color: #f59e0b;
-}
-
-#measurementProgress {
-    color: #22c55e;
-}
