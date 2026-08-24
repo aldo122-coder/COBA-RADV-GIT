@@ -105,22 +105,36 @@
     </div>
 
 
-    <!-- SAKLAR -->
+   <!-- =====================================================
+     CONTROL RAD-V
+     ===================================================== -->
+
 <div class="control-section">
 
     <h2>CONTROL</h2>
 
+
+    <!-- =================================================
+         SAKLAR
+         ================================================= -->
+
     <div class="switch-container">
 
-        <!-- SAKLAR 1 -->
-        <div class="switch-card">
+
+        <!-- =========================
+             SAKLAR 1 - STOP / JALAN
+             ========================= -->
+
+        <div class="switch-card switch-card-stop">
 
             <div
                 class="switch"
                 id="switch1"
                 onclick="toggleSwitch(1)"
             >
+
                 <div class="switch-circle"></div>
+
             </div>
 
             <div
@@ -133,15 +147,20 @@
         </div>
 
 
-        <!-- SAKLAR 2 -->
-        <div class="switch-card">
+        <!-- =========================
+             SAKLAR 2 - SELESAI / MENGUKUR
+             ========================= -->
+
+        <div class="switch-card switch-card-measurement">
 
             <div
                 class="switch"
                 id="switch2"
                 onclick="toggleSwitch(2)"
             >
+
                 <div class="switch-circle"></div>
+
             </div>
 
             <div
@@ -152,6 +171,145 @@
             </div>
 
         </div>
+
+
+    </div>
+
+
+    <!-- =================================================
+         PROGRESS PENGUKURAN
+         ================================================= -->
+
+    <div
+        id="measurementPanel"
+        class="measurement-panel"
+    >
+
+        <div class="measurement-panel-title">
+            PROGRESS PENGUKURAN
+        </div>
+
+
+        <!-- STATUS + DATA + TIMER -->
+
+        <div class="measurement-summary">
+
+
+            <!-- STATUS -->
+
+            <div class="measurement-info">
+
+                <span>
+                    STATUS
+                </span>
+
+                <strong
+                    id="measurementStatus"
+                >
+                    SELESAI
+                </strong>
+
+            </div>
+
+
+            <!-- DATA -->
+
+            <div class="measurement-info">
+
+                <span>
+                    DATA
+                </span>
+
+                <strong
+                    id="measurementProgress"
+                >
+                    0/10
+                </strong>
+
+            </div>
+
+
+            <!-- TIMER -->
+
+            <div class="measurement-info">
+
+                <span>
+                    WAKTU
+                </span>
+
+                <strong
+                    id="measurementTimer"
+                >
+                    00:00
+                </strong>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- =================================================
+             PROGRESS BAR
+             ================================================= -->
+
+        <div class="measurement-progress-wrapper">
+
+            <div class="measurement-progress-track">
+
+                <div
+                    id="measurementProgressBar"
+                    class="measurement-progress-bar"
+                    style="width: 0%;"
+                ></div>
+
+            </div>
+
+            <div
+                id="measurementProgressText"
+                class="measurement-progress-text"
+            >
+                DATA 0 / 10
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             DETAIL
+             ================================================= -->
+
+        <div
+            id="measurementDetail"
+            class="measurement-detail"
+        >
+            Belum ada pengukuran.
+        </div>
+
+
+        <!-- =================================================
+             KETERANGAN PROSES
+             ================================================= -->
+
+        <div
+            id="measurementDescription"
+            class="measurement-description"
+        >
+            Aktifkan saklar SELESAI untuk memulai pengukuran.
+        </div>
+
+
+        <!-- =================================================
+             INFORMASI DATA
+             ================================================= -->
+
+        <div
+            id="measurementDataInfo"
+            class="measurement-data-info"
+        >
+            Belum ada data pengukuran.
+        </div>
+
 
     </div>
 
@@ -232,80 +390,7 @@
 
 </div>
 
-    <!-- STATUS -->
-<div class="status-card">
 
-    <h2>STATUS</h2>
-
-    <div class="status-row">
-        <span>Perintah</span>
-        <strong id="command">STOP</strong>
-    </div>
-
-    <div class="status-row">
-        <span>Status Sistem</span>
-        <strong id="systemStatus">READY</strong>
-    </div>
-
-    <div class="status-row">
-        <span>Pengukuran</span>
-        <strong id="measurementStatus">SELESAI</strong>
-    </div>
-
-    <div class="status-row">
-        <span>Progress</span>
-        <strong id="measurementProgress">0/10</strong>
-    </div>
-
-    <!-- TIMER PENGUKURAN -->
-    <div class="measurement-box">
-
-        <div class="measurement-top">
-
-            <div>
-                <strong>PROGRESS PENGUKURAN</strong>
-
-                <div
-                    id="measurementDescription"
-                    class="measurement-description"
-                >
-                    Aktifkan saklar SELESAI untuk memulai pengukuran.
-                </div>
-            </div>
-
-            <div
-                id="measurementTimer"
-                class="measurement-timer"
-            >
-                00:00
-            </div>
-
-        </div>
-
-
-        <!-- PROGRESS BAR -->
-        <div class="measurement-progress-track">
-
-            <div
-                id="measurementProgressBar"
-                class="measurement-progress-bar"
-                style="width: 0%;"
-            ></div>
-
-        </div>
-
-
-        <!-- KETERANGAN DATA -->
-        <div
-            id="measurementDataInfo"
-            class="measurement-data-info"
-        >
-            Belum ada data pengukuran.
-        </div>
-
-    </div>
-
-</div>
 
 
 
