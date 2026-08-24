@@ -68,6 +68,12 @@ let measurementActive = false;
 
 let measurementMinute = 0;
 
+// Jumlah data pada tabel sebelum pengukuran dimulai
+let measurementInitialTableCount = 0;
+
+// Timer untuk memantau perubahan jumlah data tabel
+let measurementTableWatcher = null;
+
 
 // Timer maksimal 10 menit
 
@@ -865,6 +871,135 @@ function updateSwitchDisplay() {
 
 
 // =========================================================
+// HITUNG JUMLAH DATA PADA TABEL
+// =========================================================
+
+function getRadiationTableDataCount() {
+
+    const tbody =
+        document.querySelector(
+            "#radiationTable tbody"
+        );
+
+    if (!tbody) {
+        return 0;
+    }
+
+    const rows =
+        tbody.querySelectorAll(
+            "tr"
+        );
+
+    let count = 0;
+
+    rows.forEach(row => {
+
+        // Abaikan baris kosong
+        if (
+            row.classList.contains("table-empty")
+        ) {
+            return;
+        }
+
+        // Abaikan row yang tidak memiliki data
+        const cells =
+            row.querySelectorAll("td");
+
+        if (cells.length === 0) {
+            return;
+        }
+
+        count++;
+    });
+
+    return count;
+}
+
+
+// =========================================================
+// MONITOR DATA TABEL
+// =========================================================
+
+function checkMeasurementTableProgress() {
+
+    if (!measurementActive) {
+        return;
+    }
+
+    const currentCount =
+        getRadiationTableDataCount();
+
+
+    // Berapa data baru sejak pengukuran dimulai
+    const newDataCount =
+        currentCount -
+        measurementInitialTableCount;
+
+
+    const newProgress =
+        Math.max(
+            0,
+            Math.min(
+                newDataCount,
+                10
+            )
+        );
+
+
+    // Hanya update jika progress berubah
+    if (
+        newProgress !== measurementMinute
+    ) {
+
+        measurementMinute =
+            newProgress;
+
+
+        console.log(
+            "RAD-V TABLE PROGRESS:",
+            {
+                awal:
+                    measurementInitialTableCount,
+
+                sekarang:
+                    currentCount,
+
+                baru:
+                    newDataCount,
+
+                progress:
+                    `${measurementMinute}/10`
+            }
+        );
+
+
+        updateMeasurementDisplay();
+    }
+
+
+    // =====================================================
+    // 10 DATA SUDAH MASUK
+    // =====================================================
+
+    if (
+        measurementMinute >= 10
+    ) {
+
+        clearInterval(
+            measurementTableWatcher
+        );
+
+        measurementTableWatcher =
+            null;
+
+        finishMeasurement(
+            "COMPLETE"
+        );
+    }
+}
+
+
+// =========================================================
 // MULAI PENGUKURAN
 // =========================================================
 
@@ -926,21 +1061,34 @@ function startMeasurement() {
     // RESET SESI
     // =====================================================
 
-    measurementActive = true;
+   measurementActive = true;
 
-    const measurementPanel =
+const measurementPanel =
     document.getElementById(
         "measurementPanel"
     );
 
 if (measurementPanel) {
-    measurementPanel.classList.add("active");
+    measurementPanel.classList.add(
+        "active"
+    );
 }
-    
-    measurementMinute = 0;
 
-    measurementStartTime =
-        Date.now();
+
+// =====================================================
+// SIMPAN JUMLAH DATA TABEL SAAT MULAI
+// =====================================================
+
+measurementInitialTableCount =
+    getRadiationTableDataCount();
+
+
+// Reset progress
+measurementMinute = 0;
+
+
+measurementStartTime =
+    Date.now();
 
     switch2State =
         "MENGUKUR";
@@ -990,6 +1138,25 @@ if (measurementPanel) {
         );
 
 
+// =====================================================
+// MONITOR JUMLAH DATA TABEL
+// =====================================================
+
+clearInterval(
+    measurementTableWatcher
+);
+
+measurementTableWatcher =
+    setInterval(
+        function () {
+
+            checkMeasurementTableProgress();
+
+        },
+        2000
+    );
+
+    
     // =====================================================
     // TIMER MAKSIMAL 10 MENIT
     // =====================================================
@@ -1066,41 +1233,30 @@ function handleMeasurementData(
 
 
     // =====================================================
-    // VALIDASI MINUTE
-    // =====================================================
+// VALIDASI DATA MQTT
+// =====================================================
 
-   const minute =
+const minute =
     Number(data.minute);
 
 if (
-    !Number.isInteger(minute) ||
-    minute < 1 ||
-    minute > 10
+    data.minute !== undefined &&
+    data.minute !== null &&
+    (
+        !Number.isInteger(minute) ||
+        minute < 1 ||
+        minute > 10
+    )
 ) {
 
     console.warn(
-        "Minute tidak valid:",
+        "Minute MQTT tidak valid:",
         data.minute
     );
 
-    return;
+    // Jangan hentikan data.
+    // Progress sekarang mengikuti tabel.
 }
-
-if (
-    minute !== measurementMinute + 1
-) {
-
-    console.warn(
-        `Data tidak berurutan. ` +
-        `Diterima: ${minute}, ` +
-        `seharusnya: ${measurementMinute + 1}`
-    );
-
-    return;
-}
-
-measurementMinute =
-    minute;
 
 
     // =====================================================
@@ -1653,6 +1809,12 @@ function finishMeasurement(reason) {
 
     measurementClockTimer = null;
 
+    
+    clearInterval(
+    measurementTableWatcher
+);
+
+measurementTableWatcher = null;
 
     // =====================================================
     // MATIKAN PENGUKURAN
