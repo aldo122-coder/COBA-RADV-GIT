@@ -2020,81 +2020,48 @@ function pressControl(command, event) {
 // LEPAS KONTROL RC
 // =========================================================
 
-function releaseControl(
-    event
-) {
+function releaseControl(event) {
+
+    console.log("RELEASE CONTROL TERPANGGIL");
 
     if (event) {
-
         event.preventDefault();
     }
 
-
     if (!radVAuthenticated) {
-
+        console.log("STOP: belum login");
         return;
     }
-
 
     if (measurementActive) {
-
+        console.log("STOP: sedang mengukur");
         return;
     }
 
+    console.log("ACTIVE CONTROL:", activeControl);
 
-    if (
-        activeControl === null
-    ) {
-
-        return;
-    }
-
-
-  const sent =
-    sendMQTT(
+    // Tetap kirim STOP walaupun activeControl bermasalah
+    const berhasil = sendMQTT(
         CONTROL_TOPIC,
-        "BERHENTI"
+        "STOP"
     );
 
-if (!sent) {
+    console.log("STOP TERKIRIM:", berhasil);
 
-    console.error(
-        "BERHENTI gagal dikirim ke ESP32."
-    );
-
-    return;
-}
-
-activeControl =
-    null;
-
+    activeControl = null;
 
     const buttons =
-        document.querySelectorAll(
-            ".control-button"
-        );
+        document.querySelectorAll(".control-button");
 
-
-    buttons.forEach(
-        button => {
-
-            button.classList.remove(
-                "active"
-            );
-        }
-    );
-
+    buttons.forEach(button => {
+        button.classList.remove("active");
+    });
 
     const commandDisplay =
-        document.getElementById(
-            "command"
-        );
-
+        document.getElementById("command");
 
     if (commandDisplay) {
-
-        commandDisplay.innerText =
-            "BERHENTI";
+        commandDisplay.innerText = "STOP";
     }
 }
 
