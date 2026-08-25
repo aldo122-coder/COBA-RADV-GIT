@@ -81,6 +81,9 @@ let measurementSpreadsheetWatcher = null;
 
 let measurementTimer = null;
 
+let measurementDisplayTimer = null;
+let measurementElapsedSeconds = 0;
+
 // =========================================================
 // TIMER PENGUKURAN RAD-V
 // =========================================================
@@ -1087,9 +1090,10 @@ measurementActive = true;
 
 measurementMinute = 0;
 
-measurementStartTime = Date.now();
+measurementElapsedSeconds = 0;
 
-switch2State = "MENGUKUR";
+switch2State =
+    "MENGUKUR";
 
 
 // =====================================================
@@ -1153,6 +1157,25 @@ if (measurementPanel) {
 
     updateControlState();
 
+    clearInterval(
+    measurementDisplayTimer
+);
+
+measurementDisplayTimer =
+    setInterval(
+        function () {
+
+            if (!measurementActive) {
+                return;
+            }
+
+            measurementElapsedSeconds++;
+
+            updateMeasurementDisplay();
+
+        },
+        1000
+    );
 
     // =====================================================
     // TIMER JAM
@@ -1243,18 +1266,9 @@ measurementSpreadsheetWatcher =
 
 function handleMeasurementData(message) {
 
-    console.log(
-        "MQTT DATA:",
-        message
-    );
-
+    console.log("MQTT DATA:", message);
 
     let data;
-
-
-    // =====================================================
-    // PARSE JSON
-    // =====================================================
 
     try {
 
@@ -1272,20 +1286,13 @@ function handleMeasurementData(message) {
 
 
     // =====================================================
-    // DATA SENSOR
-    // =====================================================
-
-    updateSensorDisplay(data);
-
-
-    // =====================================================
-    // JIKA TIDAK SEDANG MENGUKUR
+    // HANYA TERIMA DATA SAAT SENSOR / PENGUKURAN AKTIF
     // =====================================================
 
     if (!measurementActive) {
 
         console.log(
-            "Data MQTT diterima, tetapi tidak ada sesi pengukuran aktif."
+            "Data diterima tetapi pengukuran tidak aktif."
         );
 
         return;
@@ -1293,18 +1300,51 @@ function handleMeasurementData(message) {
 
 
     // =====================================================
-    // JANGAN GUNAKAN data.minute
-    //
-    // Progress 0/10, 1/10, 2/10, dst
-    // AKAN DIHITUNG DARI DATA BARU DI SPREADSHEET.
+    // DATA KE BERAPA
+    // ESP32 mengirim data_ke
     // =====================================================
+
+    const dataKe =
+        Number(data.data_ke);
+
+
+    if (
+        !Number.isFinite(dataKe) ||
+        dataKe < 1 ||
+        dataKe > 10
+    ) {
+
+        console.warn(
+            "data_ke tidak valid:",
+            data.data_ke
+        );
+
+        return;
+    }
+
+
+    // =====================================================
+    // UPDATE PROGRESS
+    // =====================================================
+
+    measurementMinute = dataKe;
+
+    updateMeasurementDisplay();
+
+
+    // =====================================================
+    // UPDATE DATA SENSOR
+    // =====================================================
+
+    updateSensorDisplay(data);
 
 
     // =====================================================
     // REFRESH MAP + TABEL
     //
-    // Beri waktu agar ESP32 / server / Spreadsheet
-    // selesai memasukkan data.
+    // ESP32 sudah mengirim data ke Google Sheets
+    // Jadi beri waktu beberapa detik agar Google Sheets
+    // selesai menerima data sebelum dibaca map.js
     // =====================================================
 
     setTimeout(
@@ -1315,11 +1355,8 @@ function handleMeasurementData(message) {
                 "function"
             ) {
 
-                console.log(
-                    "RAD-V: Refresh map dan tabel..."
-                );
-
                 loadRadiationMap();
+
             }
 
         },
@@ -1327,40 +1364,30 @@ function handleMeasurementData(message) {
     );
 
 
-    // =====================================================
-    // KETERANGAN PANEL
-    // =====================================================
-
-    const description =
-        document.getElementById(
-            "measurementDescription"
-        );
-
-
-    const dataInfo =
-        document.getElementById(
-            "measurementDataInfo"
-        );
-
-
-    if (description) {
-
-        description.textContent =
-            "Data sensor diterima. Menunggu data masuk ke Spreadsheet...";
-    }
-
-
-    if (dataInfo) {
-
-        dataInfo.textContent =
-            "Menunggu data terbaru dari Spreadsheet...";
-    }
-
-
     console.log(
-        "RAD-V: Data MQTT diterima.",
-        data
+        "RAD-V DATA:",
+        dataKe,
+        "/ 10"
     );
+
+
+    // =====================================================
+    // DATA 10 / 10
+    // =====================================================
+
+    if (dataKe >= 10) {
+
+        setTimeout(
+            function () {
+
+                finishMeasurement(
+                    "COMPLETE"
+                );
+
+            },
+            1000
+        );
+    }
 }
 
 
