@@ -1125,26 +1125,6 @@ if (measurementPanel) {
     );
 }
 
-
-// =====================================================
-// SIMPAN JUMLAH DATA TABEL SAAT MULAI
-// =====================================================
-
-measurementInitialTableCount =
-    getRadiationTableDataCount();
-
-
-// Reset progress
-measurementMinute = 0;
-
-
-measurementStartTime =
-    Date.now();
-
-    switch2State =
-        "MENGUKUR";
-
-
     // =====================================================
     // RESET TIMER
     // =====================================================
@@ -1208,7 +1188,7 @@ clearInterval(
 
 measurementSpreadsheetWatcher =
     setInterval(
-        function () {
+        async function () {
 
             if (
                 typeof loadRadiationMap ===
@@ -1219,10 +1199,9 @@ measurementSpreadsheetWatcher =
                     "RAD-V: Mengecek data Spreadsheet..."
                 );
 
-                loadRadiationMap();
+                await loadRadiationMap();
             }
 
-            // Cek jumlah data pada tabel
             checkMeasurementTableProgress();
 
         },
