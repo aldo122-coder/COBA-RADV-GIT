@@ -304,11 +304,12 @@
         <!-- KIRI + KANAN -->
         <div class="side-control">
 
-            <button
-                class="control-button kiri"
-                onpointerdown="pressControl('KIRI', event)"
-                onpointerup="releaseControl(event)"
-                onpointercancel="releaseControl(event)">
+    
+                <button
+    class="control-button kiri"
+    onpointerdown="event.currentTarget.setPointerCapture(event.pointerId); pressControl('KIRI', event)"
+    onpointerup="releaseControl(event)"
+    onpointercancel="releaseControl(event)">
 
                 <span class="arrow">◀</span>
                 <span>KIRI</span>
@@ -317,10 +318,10 @@
 
 
             <button
-                class="control-button kanan"
-                onpointerdown="pressControl('KANAN', event)"
-                onpointerup="releaseControl(event)"
-                onpointercancel="releaseControl(event)">
+    class="control-button kanan"
+    onpointerdown="event.currentTarget.setPointerCapture(event.pointerId); pressControl('KANAN', event)"
+    onpointerup="releaseControl(event)"
+    onpointercancel="releaseControl(event)">
 
                 <span class="arrow">▶</span>
                 <span>KANAN</span>
@@ -334,10 +335,10 @@
         <div class="forward-control">
 
             <button
-                class="control-button maju"
-                onpointerdown="pressControl('MAJU', event)"
-                onpointerup="releaseControl(event)"
-                onpointercancel="releaseControl(event)">
+    class="control-button maju"
+    onpointerdown="event.currentTarget.setPointerCapture(event.pointerId); pressControl('MAJU', event)"
+    onpointerup="releaseControl(event)"
+    onpointercancel="releaseControl(event)">
 
                 <span class="arrow">▲</span>
                 <span>MAJU</span>
@@ -346,10 +347,10 @@
 
 
             <button
-                class="control-button mundur"
-                onpointerdown="pressControl('MUNDUR', event)"
-                onpointerup="releaseControl(event)"
-                onpointercancel="releaseControl(event)">
+    class="control-button mundur"
+    onpointerdown="event.currentTarget.setPointerCapture(event.pointerId); pressControl('MUNDUR', event)"
+    onpointerup="releaseControl(event)"
+    onpointercancel="releaseControl(event)">
 
                 <span class="arrow">▼</span>
                 <span>MUNDUR</span>
