@@ -2098,6 +2098,34 @@ activeControl =
     }
 }
 
+// =========================================================
+// SAFETY STOP - POINTER
+// Pastikan RC berhenti saat jari/mouse dilepas
+// =========================================================
+
+document.addEventListener(
+    "pointerup",
+    function (event) {
+
+        if (activeControl !== null) {
+            releaseControl(event);
+        }
+
+    },
+    true
+);
+
+document.addEventListener(
+    "pointercancel",
+    function (event) {
+
+        if (activeControl !== null) {
+            releaseControl(event);
+        }
+
+    },
+    true
+);
 
 // =========================================================
 // RTB
