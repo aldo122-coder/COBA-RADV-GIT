@@ -1236,44 +1236,75 @@ function handleMeasurementData(
 // VALIDASI DATA MQTT
 // =====================================================
 
-const minute =
-    Number(data.minute);
+// =====================================================
+// TENTUKAN PROGRESS PENGUKURAN
+// =====================================================
+
+const minute = Number(data.minute);
 
 if (
-    data.minute !== undefined &&
-    data.minute !== null &&
-    (
-        !Number.isInteger(minute) ||
-        minute < 1 ||
-        minute > 10
-    )
+    Number.isInteger(minute) &&
+    minute >= 1 &&
+    minute <= 10
 ) {
+
+    // Progress langsung mengikuti nomor data
+    measurementMinute = Math.max(
+        measurementMinute,
+        minute
+    );
+
+    console.log(
+        `RAD-V: Progress pengukuran = ${measurementMinute}/10`
+    );
+
+} else {
 
     console.warn(
         "Minute MQTT tidak valid:",
         data.minute
     );
 
-    // Jangan hentikan data.
-    // Progress sekarang mengikuti tabel.
+    // Jika ESP32 tidak mengirim minute,
+    // gunakan jumlah data yang sudah diterima
+    measurementMinute = Math.min(
+        measurementMinute + 1,
+        10
+    );
 }
 
 
-    // =====================================================
-    // UPDATE SENSOR
-    // =====================================================
+// =====================================================
+// UPDATE SENSOR
+// =====================================================
 
-    updateSensorDisplay(
-        data
-    );
+updateSensorDisplay(data);
 
 
-    // =====================================================
-    // UPDATE PROGRESS
-    // =====================================================
+// =====================================================
+// UPDATE PANEL PROGRESS
+// =====================================================
 
-    updateMeasurementDisplay();
+updateMeasurementDisplay();
 
+
+// =====================================================
+// REFRESH MAP + TABEL
+// =====================================================
+
+// Beri waktu Google Spreadsheet menerima data
+setTimeout(() => {
+
+    if (typeof loadRadiationMap === "function") {
+
+        console.log(
+            "RAD-V: Refresh map dan tabel..."
+        );
+
+        loadRadiationMap();
+    }
+
+}, 3000);
 
     // =====================================================
     // KETERANGAN DATA
